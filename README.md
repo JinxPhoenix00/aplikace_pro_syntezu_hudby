@@ -1,3 +1,3 @@
-# exampleproject
+# maturitni projekt
 
-zkouska zmeny pres github
+Toto je repozitar k maturitnimu projektu z informatiky 2018/19
