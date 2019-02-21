@@ -25,11 +25,14 @@
 ##  xml documents that have in DOCTYPE any url or dtd file are causing fail of xmlread, so it is needed to remove DOCTYPE from every xml file processing
 
 function remove_DOCTYPE (mxmlfile)
-				xml=fopen(mxmlfile, 'r+');
-				inside=fread(xml, '*char');
+				mxml=fopen(mxmlfile, 'rt');
+				inside=fread(mxml, '*char');
+				fclose(mxml);
+				inside=rot90(inside);
 				
-				new_inside=regexprep(inside, '<!DOCTYPE((.|\n|\r)*?)(\"|])>', '')
+				new_inside=regexprep(inside, '(<!DOCTYPE)[^>]+>', '', 'once');
 
+				xml=fopen(mxmlfile, 'wt');
 				fwrite(xml, new_inside);
 				fclose(xml);
 endfunction

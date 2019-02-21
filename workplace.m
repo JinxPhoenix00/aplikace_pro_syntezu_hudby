@@ -36,4 +36,43 @@ M(:,6) = M(:,5) + .2 + rand(N,1);  % random duration .2 -> 1.2 seconds
 midi_new = matrix2midi(M);
 writemidi(midi_new, 'testout2.mid');
 
-xml=xmlread("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Saltarello.xml");
+mxml=xmlread("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Saltarelo.xml");
+xml=xmlread("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/resume_w_xsl.xml");
+mxml=xmlread("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Telemann.musicxml");
+
+mxmlfile="/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Telemann.musicxml";
+remove_DOCTYPE(mxmlfile);
+nxml=xmlread(mxmlfile);
+
+
+
+
+
+
+filename="/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Telemann.musicxml";
+xml=fopen(filename,"rt");
+content=fread(xml, '*char');
+fclose(xml);
+
+new_inside=regexprep(content, '<!DOCTYPE.+>', '');
+
+new_inside=regexprep(content, '(<!DOCTYPE)[^>]+>', '', 'once');
+
+new_xml=fopen("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/pokus.xml", 'wt');
+fwrite(new_xml, new_inside);
+fclose(new_xml);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
