@@ -40,7 +40,7 @@ mxml=xmlread("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudb
 xml=xmlread("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/resume_w_xsl.xml");
 mxml=xmlread("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Telemann.musicxml");
 
-mxmlfile="/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Telemann.musicxml";
+mxmlfile="/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/MozartTrio.musicxml";
 remove_DOCTYPE(mxmlfile);
 nxml=xmlread(mxmlfile);
 
@@ -62,17 +62,23 @@ new_xml=fopen("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hud
 fwrite(new_xml, new_inside);
 fclose(new_xml);
 
+%%% bitovy zapis!!! - solved
 
 
+%parser = javaObject("org.apache.xerces.parsers.DOMParser");
+%parser.parse("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Saltarelo.xml"); 
+%xDoc = parser.getDocument();
 
 
+%mxmlfile="/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Telemann.musicxml";
+%remove_DOCTYPE(mxmlfile);
+%nxml=xmlread(mxmlfile);
 
+xmlstruct=xml2struct("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Telemann.musicxml")
 
-
-
-
-
-
-
-
-
+function redxmlstruct = reduceStructure(xmlstruct)
+%xmlfield=struct2cell(xmlstruct)
+redxmlstruct = rmfield(xmlstruct, {...xmlstruct.score_partwise.defaults, ...
+ %xmlstruct.score_partwise.identification, ...
+ xmlstruct.score_partwise.movement_title.Text})
+end

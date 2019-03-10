@@ -14,7 +14,7 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## -*- texinfo -*- 
-## @deftypefn {Function File} {@var{retval} =} remove_DOCTYPE (@var{input1}, @var{input2})
+## @deftypefn {Function File} {@var{midioutput} =} midioutput (@var{DOMnode}, @var{file})
 ##
 ## @seealso{}
 ## @end deftypefn
@@ -22,19 +22,15 @@
 ## Author: Alenka Smutná <alenka@debian-A>
 ## Created: 2019-02-20
 
-
-
-##  xml documents that have in DOCTYPE any url or dtd file are causing fail of xmlread, so it is needed to remove DOCTYPE from every xml file processing
-
-function remove_DOCTYPE (mxmlfile)
-				mxml=fopen(mxmlfile, 'rt+');
-				inside=fread(mxml, '*char');
-				%fclose(mxml);
-				inside=rot90(inside);
-				
-				new_inside=regexprep(inside, '(<!DOCTYPE)[^>]+>', '', 'once');
-
-				%xml=fopen(mxmlfile, 'wt');
-				fwrite(mxml, new_inside);
-				fclose(mxml);
+function midioutput = midimake(DOMnode, file)
+	outputfile = fopen('.mid', 'wb');
+	% solve how to make file with same name as input one - take original name, using regex cut out the extension, add .mid extension
+	tracks;
+	content = [0x4d 0x54 0x68 0x64 0x00 0x00 0x00 0x06 0x00 0x01];
+	N=2;
+	for i=(1:N)
+		content(end+1:end+6) = [0x4d 0x53 0x72 0x6b 0x00 0xc0];
+		%content(end+1:end+4???) = content + [instuments(i)]
+	endfor
+	content
 endfunction
