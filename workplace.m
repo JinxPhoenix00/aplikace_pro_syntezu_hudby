@@ -76,9 +76,55 @@ fclose(new_xml);
 
 xmlstruct=xml2struct("/home/alenka/Dokumenty/skola/informatika/aplikace_pro_syntezu_hudby/xmlsamples/Telemann.musicxml")
 
+
+
+
+
 function redxmlstruct = reduceStructure(xmlstruct)
 %xmlfield=struct2cell(xmlstruct)
 redxmlstruct = rmfield(xmlstruct, {...xmlstruct.score_partwise.defaults, ...
  %xmlstruct.score_partwise.identification, ...
  xmlstruct.score_partwise.movement_title.Text})
 end
+
+
+
+
+
+
+parts = size(xmlstruct.score_partwise.part_list.score_part);
+parts = parts(2);
+N = 0;
+for i=(1:parts)
+	N = N + size(xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument);
+	N = N(2);
+endfor
+
+part = size(xmlstruct.score_partwise.part);
+part = part(2);
+voices = ones(1, part);
+for i=(1:part)
+	measure = size(xmlstruct.score_partwise.part{i}.measure);
+	measure = measure(2);
+	for j=(1:measure)
+		note = size(xmlstruct.score_partwise.part{i}.measure{j}.note);
+		note = note(2);
+		if (note == 1)
+			new_v = xmlstruct.score_partwise.part{i}.measure{j}.note.voice.Text;
+			new_v = new_v - 48; %from ascii to integer
+			if (new_v > voices(i));
+				voices(i) = new_v
+			endif
+		else 
+			for k=(1:note)
+				new_v = xmlstruct.score_partwise.part{i}.measure{j}.note{k}.voice.Text;
+				new_v = new_v - 48;
+				if (new_v > voices(i))
+					voices(i) = new_v;
+				endif
+			endfor
+		endif
+	endfor
+endfor
+
+
