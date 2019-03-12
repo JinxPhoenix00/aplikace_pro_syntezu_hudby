@@ -3,7 +3,7 @@
 path = input('', "s");    ##
 %pathjar = strcat(path, "xml-apis.jar");
 %javaaddpath(pathjar);   ##
-%pathjar = strcat(path, "xerxesImpl.jar");
+%pathjar = strcat(path, "xercesImpl.jar");
 %javaaddpath(pathjar);  ##
 %pkg load io;
 

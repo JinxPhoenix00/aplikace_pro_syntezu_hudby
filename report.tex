@@ -1,12 +1,51 @@
-\documentclass[a4paper,titlepage]{article}
+\documentclass[12pt,a4paper,titlepage]{article}
 \usepackage[czech]{babel}
 \usepackage[utf8]{inputenc}
+\renewcommand{\refname}{Literatura}
 \title{Maturintí práce z informatiky:\\
-	Aplikace pro syntézu hudby z formátu MusicXML do formátu MIDI pomocí GNU Octave}
+	Aplikace pro syntézu hudby z formátu MusicXML do formátu SMF (MIDI) pomocí GNU Octave}
 \author{Alena Smutná\\
-	R8.A\\}
+	R8.A\\
+	Gymnázium Jana Keplera\\}
 \begin{document}
 \maketitle
+\tableofcontents
+\newpage
 \section{Úvod}
-
+Tato práce se zabývá zpracováním hudebních skladeb ve formátu MusicXML a jejich přeměnou do zvukové podoby ve formátu MIDI. Program je psán v jazyce GNU Octave, s využitím funkcí knihovny Xerces2 Java Parser 2.12.0 pro načítání a parsování XML dokumentu a funkce xml2struct z Mathworks File Exchange pro jeho konverzi z XML Document Object Model do datového typu struktura.
+\newpage
+\section{Teoretická část}
+\subsection{XML}
+XML, nezkráceně \uv{eXtensible Markup Language} je značkovací jazyk, specifikovaný společností W3, který je strojově zpracovatelný, a zároveň je čitelný pro lidi. Užívá se především pro přenos dat mezi různými aplikacemi a pro uchovávání dat, u kterých je důležitá struktura a obsah jednotlivých částí. XML dokumenty jsou textové dokumenty užívající kódování Unicode.
+\\
+Specifikace XML formátu nedefinuje jednotlivé značky, ty jsou definovány buď v jednotlivých konkrétních aplikacích (např. XHTML, RSS, SVG nebo MusicXML), nebo se dá definovat vlastní sada značek pomocí tzv. definičních jazyků (např. DTD). 
+\subsubsection{MusicXML}
+MusicXML je formát založený na XML pro zápis hudebních skladeb v západní notaci. Byl vytvořen pro snadný přenos skladeb mezi jednotlivými aplikacemi pro zápis skladeb (nejčastěji vizuálními). MusicXML soubory obsahují informace o vizuální podobě skladby i informace o použitých nástrojích, které se využívají při konverzi skladeb do zvukových formátů.
+\subsection{MIDI}
+MIDI, nezkráceně \uv{Musical Instrument Digital Interface} je specifikace pro propojování různých hudebních zařízení. Specifikuje jednak hardwarové propojení zařízení, jednak komunikační a datový protokol. Komunikace probíhá pomocí tzv. zpráv, které popisují jednotlivé události (např. začátek či konec noty).
+\subsubsection{General MIDI}
+Specifikace General MIDI rozšiřuje MIDI specifikaci přenosových protokolů o polyfonii, zavádí standardizované zvukové programy (zvuky jednotlivých nástrojů) a přidává některé kontrolní zprávy.
+\subsubsection{SMF}
+SMF, nezkrceně \uv{Standard MIDI File} je formát souborů, zapsaných dle General MIDI specifikace, sloužících pro uložení hudebních dat ve formě událostí a nikoliv jednotlivých zvuků, jako je tomu u běžných formátů používaných pro uložení zvuků. Je určen pro přenos dat mezi jednotlivými zařízeními. SMF soubor se skládá z jednotlivých stop, které je možné přehrát současně a které obsahují zprávy, které popisujují jednotlivé události. Do SMF souborů se dají ukládat i informace o skladbě či autorovi, pomocí tzv. meta-událostí. Každá událost se skládá z časového přírůstku (od poslední události), stavového bytu, který udává o jakou událost půjde, a datového bytu, který obsahuje parametry události.
+\subsection{GNU Octave}
+GNU Octave je matematicky orientovaný vyšší programovací jazyk, značně kompatibilní s jazykem Matlab, ale na rozdíl od něj je svobodný. K ukládání dat se nejčastěji používají matice a GNU OCtave podporuje velké množství maticových operací. GNU Octave podporuje i ukládání dat do taz. datových struktur, pomocí kterých se dají vytvářet jakési \uv{stromy} dat v paměti.
+\section{Návod k použití}
+\section{Implementace}
+implementacni zajimavosti - je treba zprovoznit a nakonfigurovat knihovny
+indexovani a prochazeni struktury
+ne vzdy je u noty id nastroje, kdyz je v part jen jeden, je vynechan, kdyz ma hlas pauzu, je id nastroje taky vynechano
+\section{Testování}
+nefunguje hlasitost, zmeny tempa, pravdepodobne ozdoby, ani trioly
+\section{Závěr}
+\addcontentsline{toc}{toc}{Literatura}
+\begin{thebibliography}{10}
+\bibitem{xml-en}en.wikipedia.org/wiki/XML
+\bibitem{xml-cs}cs.wikipedia.org/wiki/Extensible\_Markup\_Language
+\bibitem{mxml}musicxml.com
+\bibitem{mxml-usermanual}usermanuals.musicxml.com/MusicXML/Content/Contents.htm
+\bibitem{midi}root.cz/clanky/rozhrani-midi-na-osobnich-pocitacich/
+\bibitem{gm}root.cz/clanky/general-midi-a-format-souboru-smf/\#k03
+\bibitem{smf-cs}cs.wikipedia.org/wiki/SMF
+\bibitem{smf}csie.ntu.edu.tw/~r92092/ref/midi/
+\end{thebibliography}
 \end{document}
