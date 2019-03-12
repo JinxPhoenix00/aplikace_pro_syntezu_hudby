@@ -1,3 +1,5 @@
+%function xml2midi(path)
+
 path = input('', "s");    ##
 %pathjar = strcat(path, "xml-apis.jar");
 %javaaddpath(pathjar);   ##
@@ -56,32 +58,82 @@ instruments = cell(4, sum(instrument));
 k = 1;
 for i=(1:part)
 	for j=(1:instrument(i))
-		if (instrument(i) == 1)   %struct cannot be indexed with {
-			instruments{1, k} = str2num(xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument.midi_channel.Text);
-			instruments{2, k} = str2num(xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument.midi_program.Text);
-			instruments{3, k} = str2num(xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument.volume.Text);
-			instruments{4, k} = xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument.Attributes.id;
+		if (instrument(i) == 1) 		%struct cannot be indexed with {
+			structure = xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument;
+			id_present = 0;
 		else
-			instruments{1, k} = str2num(xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument{j}.midi_channel.Text);
-			instruments{2, k} = str2num(xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument{j}.midi_program.Text);
-			instruments{3, k} = str2num(xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument{j}.volume.Text);
-			instruments{4, k} = xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument{j}.Attributes.id;
+			structure = xmlstruct.score_partwise.part_list.score_part{i}.midi_instrument{j}; 
 		endif
+		instruments{1, k} = str2num(structure.midi_channel.Text);
+		instruments{2, k} = str2num(structure.midi_program.Text);
+		instruments{3, k} = str2num(structure.volume.Text);
+		instruments{4, k} = structure.Attributes.id;
 		k = k + 1;
 	endfor
+endfor
+
+
+content = [0x4d 0x54 0x68 0x64 0x00 0x00 0x00 0x06 0x00 0x01];  %MThd, lenght of head, type
+content(end+1:end+4) = [0 0 0 N];  %track, work only for <128, then it should make mess in midi file
+	
+
+
+
+for i=(1:part)
+	ids = zeros(voices(i));
+	for j=(1:measure)
+		note = size(xmlstruct.score_partwise.part{i}.measure{j}.note);
+		note = note(2);
+		for k=(1:note)
+			if (note == 1)
+				structure = xmlstruct.score_partwise.part{i}.measure{j}.note;				
+			else
+				structure = xmlstruct.score_partwise.part{i}.measure{j}.note{k};
+			endif
+			notecontent = fieldnames(structure);
+			voice = str2num(structure.voice);
+			id = find(ismember(notecontent, "instrument"));
+			if (isempty(ids(voice)) && !isempty(id))
+				id = structure.instrument.Attributes.id;
+				ids(voice) = id;
+			endif
+			rest = find(ismember(notecontent, "rest"));
+			if (!(isempty(rest)))
+%				duration =
+%				voice = 
+%				id = 
+				continue;
+			else
+%				pitchcontent = fieldnames(structure)
+%				if (id != 0)
+%				
+%				endif
+      endif
+			for l=(1:voices(i))
+				if (isempty(ids(l)))
+					for m=(1:sum(instrument))
+						if ((str2num(instruments{4,m}(2))) == i)
+							ids(l) = instruments{4,m};
+							break
+						endif
+					endfor
+				endif
+			endfor
+		endfor
+	endfor
+	
+	for j=(1:voices(i))
+		content(end+1:end+6) = [0x4d 0x53 0x72 0x6b 0x00 0xc0];  %MTrk
+		content(end+1:end+) =
+		%content(end+1:end+4???) = [instuments(i)]
+	endfor
+	
+	
 endfor
 
 %%% Write data to file
 namemidi = strcat(path, name, ".mid")
 outputfile = fopen(namemidi, 'wb');
-
-content = [0x4d 0x54 0x68 0x64 0x00 0x00 0x00 0x06 0x00 0x01];
-content(end+1:end+4) = [0 0 0 N];  %fugnuje jen do 128 stop, pak by se to melo rozbit
-	
-for i=(1:N)
-	content(end+1:end+6) = [0x4d 0x53 0x72 0x6b 0x00 0xc0];
-	%content(end+1:end+4???) = content + [instuments(i)]
-endfor
 
 fwrite(outputfile, content);
 fclose(outputfile);
