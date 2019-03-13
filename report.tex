@@ -45,6 +45,7 @@ V MusicXML dokumentu je hudební skladba zapsaná po nástrojových sekcích (č
 \section{Testování}
 V průběhu testování se ukázalo, že program sice vytvoří soubor, který je rozpoznán jako MIDI, ale nedá se přehrát. Párování hlasu a nástroje, který daný hlas hraje, či spíše zpětné dohledávání se kvůli neplatnému indexování ukázalo býti těžším, než se zprvu zdálo, a proto je v souboru xml2midi.m napevno nastaveno, že všechny hlasy hraje klavír. Tento program byl odlaďován na přiloženém souboru Telemann.musicxml, u všech ostatních souborech, na kterých jsem program testovala se nepovedlo soubor nahrát -- zdá se, že pro ně špatně seběhla funkce remove\_DOCTYPE, protože se objevovala chybová hláška, jejímuž objevování se měla tato funkce zamezit. 
 \section{Návod k použití}
+Pro použití je třeba mít nainstalovaný program GNU Octave\cite{octave}.
 Pro správné fungování je třeba nahrát knihovny pro parsování XML dokumentů. 
 V příkazovém okně GNU Octave je třeba spustit následující příkazy:\\
 \\
