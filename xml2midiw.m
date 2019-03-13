@@ -1,4 +1,4 @@
-function xml2midi(name)
+function xml2midiw(name)
 
 %path = input('Zadejte absolutní cestu k adresáři se soubory *.jar.', "s");    ##
 %pathjar = strcat(path, "/xml-apis.jar");
@@ -85,11 +85,11 @@ lengt = sizeof(tempo);
 
 steps = ["C", "D", "E", "F", "G", "A", "B"];
 for i=(1:part)
-	notescore = cell(voices(i));
+	notescore = cell(voices(i),1);
 	for j=(1:voices(i))
 		notescore{j,1}=cell(2,0);
 	endfor
-	ids = zeros(voices(i),1);
+	ids = cell(voices(i));
 	for j=(1:measure)
 		note = size(xmlstruct.score_partwise.part{i}.measure{j}.note);
 		note = note(2);
@@ -106,9 +106,9 @@ for i=(1:part)
 			n = n(2);
 			notescore{voice, 1}{1, n+1} = duration;
 			id = find(ismember(notecontent, "instrument"));
-			if (isempty(ids(voice)) && !isempty(id))
+			if ((ids{voice} == 0) && (!isempty(id)))
 				id = structure.instrument.Attributes.id;
-				ids(voice) = id;
+				ids{voice} = id;
 			endif
 			rest = find(ismember(notecontent, "rest"));
 			if (!(isempty(rest)))
@@ -129,10 +129,10 @@ for i=(1:part)
 				notescore{voice, 1}{2, n+1} = pitch;
       endif
 			for l=(1:voices(i))
-				if (isempty(ids(l)))
+				if (isempty(ids{l}))
 					for m=(1:sum(instrument))
 						if ((str2num(instruments{4,m}(2))) == i)
-							ids(l) = instruments{4,m};
+							ids{l} = instruments{4,m};
 							break
 						endif
 					endfor
@@ -142,8 +142,11 @@ for i=(1:part)
 	endfor
 	
 	for j=(1:voices(i))
-		content(end+1:end+6) = [77 83 114 107 00 192];  %MTrk		
-		inhalt = [00 193 01];   ##chybi midi_program
+		content(end+1:end+6) = [77 83 114 107 00 192];  %MTrk	
+	  programnum = find(strcmp(instruments{4}, ids{j}));	
+		%[neco, programnum] = ismember(ids{j}, instruments{4,:});
+		program = instruments{2,programnum};
+		inhalt = [00 193 program];   ##chybi midi_program
 		n = size(notescore{j,1});
 		n = n(2);
 		time = 0;
