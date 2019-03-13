@@ -1,51 +1,72 @@
 \documentclass[12pt,a4paper,titlepage]{article}
 \usepackage[czech]{babel}
 \usepackage[utf8]{inputenc}
-\renewcommand{\refname}{Literatura}
 \title{Maturintí práce z informatiky:\\
 	Aplikace pro syntézu hudby z formátu MusicXML do formátu SMF (MIDI) pomocí GNU Octave}
 \author{Alena Smutná\\
 	R8.A\\
 	Gymnázium Jana Keplera\\}
 \begin{document}
+	\renewcommand{\refname}{Literatura}
 \maketitle
 \tableofcontents
 \newpage
 \section{Úvod}
-Tato práce se zabývá zpracováním hudebních skladeb ve formátu MusicXML a jejich přeměnou do zvukové podoby ve formátu MIDI. Program je psán v jazyce GNU Octave, s využitím funkcí knihovny Xerces2 Java Parser 2.12.0 pro načítání a parsování XML dokumentu a funkce xml2struct z Mathworks File Exchange pro jeho konverzi z XML Document Object Model do datového typu struktura.
-\newpage
-\section{Teoretická část}
+Tato práce se zabývá zpracováním hudebních skladeb ve formátu MusicXML a jejich přeměnou do zvukové podoby ve formátu MIDI. Program je psán v jazyce GNU Octave, s využitím funkcí knihovny Apacje Xerces2 Java Parser pro načítání a parsování XML dokumentu a funkce xml2struct z Mathworks File Exchange pro jeho konverzi z XML Document Object Model do datového typu struktura.
+%\newpage
+\section{Použité technologie}
 \subsection{XML}
-XML, nezkráceně \uv{eXtensible Markup Language} je značkovací jazyk, specifikovaný společností W3, který je strojově zpracovatelný, a zároveň je čitelný pro lidi. Užívá se především pro přenos dat mezi různými aplikacemi a pro uchovávání dat, u kterých je důležitá struktura a obsah jednotlivých částí. XML dokumenty jsou textové dokumenty užívající kódování Unicode.
+XML, nezkráceně \emph{eXtensible Markup Language}, je značkovací jazyk, specifikovaný společností W3, který je strojově zpracovatelný, a zároveň je čitelný pro lidi. Užívá se především pro přenos dat mezi různými aplikacemi a pro uchovávání dat, u kterých je důležitá struktura a obsah jednotlivých částí. XML dokumenty jsou textové dokumenty užívající kódování Unicode.
 \\
 Specifikace XML formátu nedefinuje jednotlivé značky, ty jsou definovány buď v jednotlivých konkrétních aplikacích (např. XHTML, RSS, SVG nebo MusicXML), nebo se dá definovat vlastní sada značek pomocí tzv. definičních jazyků (např. DTD). 
 \subsubsection{MusicXML}
 MusicXML je formát založený na XML pro zápis hudebních skladeb v západní notaci. Byl vytvořen pro snadný přenos skladeb mezi jednotlivými aplikacemi pro zápis skladeb (nejčastěji vizuálními). MusicXML soubory obsahují informace o vizuální podobě skladby i informace o použitých nástrojích, které se využívají při konverzi skladeb do zvukových formátů.
+\subsubsection{DOM, Apache Xerces}
+W3C DOM, nezkráceně \emph{Document Object Model}, je reprezentace HTML nebo XML souborů jako stromových struktur, kde každý objekt je reprezentován jako uzel. DOM parser načte celý soubor a uloží jej do paměti. Apache Xerces je knihovna pro zpracovávání XML dokumentů a následnou manipulaci s nimi.
 \subsection{MIDI}
-MIDI, nezkráceně \uv{Musical Instrument Digital Interface} je specifikace pro propojování různých hudebních zařízení. Specifikuje jednak hardwarové propojení zařízení, jednak komunikační a datový protokol. Komunikace probíhá pomocí tzv. zpráv, které popisují jednotlivé události (např. začátek či konec noty).
+MIDI, nezkráceně \emph{Musical Instrument Digital Interface}, je specifikace pro propojování různých hudebních zařízení. Specifikuje jednak hardwarové propojení zařízení, jednak komunikační a datový protokol. Komunikace probíhá pomocí tzv. zpráv, které popisují jednotlivé události (např. začátek či konec noty).
 \subsubsection{General MIDI}
 Specifikace General MIDI rozšiřuje MIDI specifikaci přenosových protokolů o polyfonii, zavádí standardizované zvukové programy (zvuky jednotlivých nástrojů) a přidává některé kontrolní zprávy.
 \subsubsection{SMF}
-SMF, nezkrceně \uv{Standard MIDI File} je formát souborů, zapsaných dle General MIDI specifikace, sloužících pro uložení hudebních dat ve formě událostí a nikoliv jednotlivých zvuků, jako je tomu u běžných formátů používaných pro uložení zvuků. Je určen pro přenos dat mezi jednotlivými zařízeními. SMF soubor se skládá z jednotlivých stop, které je možné přehrát současně a které obsahují zprávy, které popisujují jednotlivé události. Do SMF souborů se dají ukládat i informace o skladbě či autorovi, pomocí tzv. meta-událostí. Každá událost se skládá z časového přírůstku (od poslední události), stavového bytu, který udává o jakou událost půjde, a datového bytu, který obsahuje parametry události.
+SMF, nezkráceně \emph{Standard MIDI File}, je formát souborů, zapsaných dle General MIDI specifikace, sloužících pro uložení hudebních dat ve formě událostí a nikoliv jednotlivých zvuků, jako je tomu u běžných formátů používaných pro uložení zvuků. Je určen pro přenos dat mezi jednotlivými zařízeními. SMF soubor se skládá z jednotlivých stop, které je možné přehrát současně a které obsahují zprávy, které popisujují jednotlivé události. Do SMF souborů se dají ukládat i informace o skladbě či autorovi, pomocí tzv. meta-událostí. Každá událost se skládá z časového přírůstku (od poslední události), stavového bytu, který udává o jakou událost půjde, a datového bytu, který obsahuje parametry události.
 \subsection{GNU Octave}
 GNU Octave je matematicky orientovaný vyšší programovací jazyk, značně kompatibilní s jazykem Matlab, ale na rozdíl od něj je svobodný. K ukládání dat se nejčastěji používají matice a GNU OCtave podporuje velké množství maticových operací. GNU Octave podporuje i ukládání dat do taz. datových struktur, pomocí kterých se dají vytvářet jakési \uv{stromy} dat v paměti.
-\section{Návod k použití}
+\newpage
+\section{Teoretická část}
+SMF soubor (.mid) obsahuje nejprve hlavičku souboru, ve které je specifikován typ souboru, počet stop a rychlost přehrávání. Z MusicXML dokumenty tedy potřebuji získat informaci o celkovém počtu hlasů a o rychlosti. Celkový počet hlasů nikde zapsán není, je tedy třeba dokument projít a počet hlasů spočítat - do jedné stopy sice lze zapsat, aby hrálo více tónů najednou, ale je snazší, když každý hlas bude zapsán v jiné stopě. Údaj o rychlosti se v MusicXML dokumentu nachází ve stejném formátu jako v SMF souboru (počet tiků na jednu čtvrťovou notu), není tedy třeba ho nijak upravovat.\\
+Po hlavičce následuje zápis jednotlivých stop, kdy každá stopa odpovídá jednomu hlasu. Protože různé hlasy jsou hrány různými nástroji, zařadím na začátek každé stopy událost \emph{Program Change}. V MusicXML souboru se nachází informace o jednotlivých nástrojích -- jejich id, používané v zápisu jednotlivých not i jejich MIDI program. Tyto informace však nejsou propojeny s čísly jednotlivých hlasů, takže musím sestavit převodní tabulku mezi hlasy a id jednotlivých nástrojů (resp. jejich MIDI programy).\\
+Do první stopy také zařadím událost \emph{Set Tempo}, která udává dobu trvání čtvrťové noty v mikrosekundách. Hodnota v mikrosekundách s souboru MusicXML zapsána není, je tam však údaj o počtu čtvrťových not v jedné minutě, který se dá na požadovanou hodnotu přepočítat.\\
+Tímto jsou nastavené veškeré potřebné parametry stopy a na řadu tedy přichází zápis not v jednotlivých stopách. K tomu využiji událostí \emph{Note On} a \emph{Note Off}. Obě tyto události mají dva parametry -- kód tónu a rychlost začátku přehrávání noty (resp. konce přehrávání). Tato rychlost v souboru MusicXML uvedena není. Do SMF souboru se noty zapisují pomocí číselného kódu, který je přiřazen každé notě v rozsahu od tónů, které lidské ucho vnímá jen jako hluky až po šestičárkované G. V souboru MusicXML je nota zapsána pomocí názvu tónu a oktávy v mezinárodním zápisu (např. D 5 -- dvoučárkované d). Pokud má být tón zvýšený či snížený, vyskytuje se v MusicXML souboru parametr, který udává o kolik půltónů je tón posunutý.\\
+Před každou zprávou události je tzv. deltačas, udávající, kdy má začít daná událost, a to jako počet tiků od poslední události. V MusicXML souboru je zapsaná doba trvání noty či pomlky, takže je jen potřeba tyto hodnotypřiřadit správným událostem. Přehrávání noty může začít hned po skončení předchozí události (není-li v zápisu pomlka), ukončení přehrávání pak po čase daném délkou přehrávané noty. Každá stopa musí být zakončena udalostí \emph{End of Track}.\\
 \section{Implementace}
+MusicXML soubor si po načtení zkonvertuju do struktury (funkcí xml2struct), aby se dalo k jednotlivým objektům snadněji přistupovat. Nejprve si ve struktuře najdu data, která se nemění (např. údaje o tempu nebo programy a id jednotlivých nástrojů). Projdu strukturu, abych zjistila celkový počet hlasů (tedy počet stop) a sestavila převodní tabulku mezi hlasem, id nástroje a MIDI programem nástroje. Ukázalo se, že pokud skladba obsahuje více nástrojových částí, tak v každé části jsou hlasy číslované od jedničky, takže bude lepší nejrve zjistit počet hlasů a až při procházení celého MusicXML souboru a zapisování dat o jednotlivých notách připravovat převodní tabulku. Po projití jedné části zapíši do proměnné, ve které mám obsah budoucího SMF souboru, všechny hlasy (stopy), které se v dané části vyskytly. Zápis do SMF souboru provedu najednou, po projití celého MusicXML dokumentu.\\
+V MusicXML dokumetnu je skladba zapsaná po nástrojových sekcích (částech) a dále po taktech a po jednotlivých notách v taktech. Všechny hlasy vyskytující se v dané části jsou tedy zapsány \uv{přes sebe}. Při procházení tedy musím informace o jednotlivých notách rozdělovat do matic podle hlasu, abych při zápisu mohla projít matici jednoho hlasu a lineárně (bez složitého hledání dalšího výskytu hlasu a přeskakování v indexování) ji přepsat do MIDI událostí.\\
+
 implementacni zajimavosti - je treba zprovoznit a nakonfigurovat knihovny
 indexovani a prochazeni struktury
-ne vzdy je u noty id nastroje, kdyz je v part jen jeden, je vynechan, kdyz ma hlas pauzu, je id nastroje taky vynechano
+ne vzdy je u noty id nastroje, kdyz je v part jen jeden, je vynechan, kdyz ma hlas pauzu, je id nastroje taky vynechano, cisla hlasu se dupluji v ramci partu -> zapis po partech
 \section{Testování}
 nefunguje hlasitost, zmeny tempa, pravdepodobne ozdoby, ani trioly
+\section{Návod k použití}
+
 \section{Závěr}
-\addcontentsline{toc}{toc}{Literatura}
-\begin{thebibliography}{10}
+\newpage
+\addcontentsline{toc}{section}{Literatura}
+\begin{thebibliography}{20}
 \bibitem{xml-en}en.wikipedia.org/wiki/XML
 \bibitem{xml-cs}cs.wikipedia.org/wiki/Extensible\_Markup\_Language
 \bibitem{mxml}musicxml.com
 \bibitem{mxml-usermanual}usermanuals.musicxml.com/MusicXML/Content/Contents.htm
+\bibitem{dom}w3.org/DOM/
+\bibitem{xerces}xerces.apache.org/index.html
+\bibitem{midi-eng}digitalsoundandmusic.com/chapters/ch6/
 \bibitem{midi}root.cz/clanky/rozhrani-midi-na-osobnich-pocitacich/
 \bibitem{gm}root.cz/clanky/general-midi-a-format-souboru-smf/\#k03
 \bibitem{smf-cs}cs.wikipedia.org/wiki/SMF
 \bibitem{smf}csie.ntu.edu.tw/~r92092/ref/midi/
+\bibitem{octave}gnu.org/software/octave/
+\bibitem{octave-wiki}wiki.octave.org/GNU\_Octave\_Wiki
+\bibitem{octave-docs}octave.org/doc/
+\bibitem{xml2struct}mathworks.com/matlabcentral/fileexchange/58700-xml2struct-with-bug-fix-and-added-features
 \end{thebibliography}
 \end{document}
